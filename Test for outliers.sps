@@ -1,7 +1,7 @@
-*Code for Sample Output on 3.27.12.
+*Test for outliers
 
 GET
-  FILE='C:\Users\emb7\Dropbox\Ellen and Aron Sessions\Dissertation_Data_3.27.12.sav'.
+  FILE='C:\Users\Dropbox\Data.sav'.
 DATASET NAME DataSet1 WINDOW=FRONT.
 
 * Run a regression so that we get a plot so that we can numerically and graphically test for linearity. 
@@ -31,7 +31,7 @@ EXAMINE
 
 OUTPUT EXPORT
   /CONTENTS  EXPORT=ALL  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING
-  /PDF  DOCUMENTFILE='C:\Users\emb7\Dropbox\Ellen and Aron Sessions\Sample Output on 3.27.12.pdf'
+  /PDF  DOCUMENTFILE='C:\Users\Dropbox\Sample Output.pdf'
      NOTESCAPTIONS=YES  WIDETABLES=WRAP
      PAGESIZE=INCHES(8.5, 11.0)  TOPMARGIN=INCHES(1.0)  BOTTOMMARGIN=INCHES(1.0)
      LEFTMARGIN=INCHES(1.0)  RIGHTMARGIN=INCHES(1.0).
