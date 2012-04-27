@@ -1,7 +1,7 @@
-*Code for Sample Output on 3.27.12.
+*Test for adequate variance
 
 GET
-  FILE='\\vmware-host\Shared Folders\Ellen and Aron Sessions\Dissertation_Data_3.27.12.sav'.
+  FILE='\\vmware-host\Shared Folders\Dropbox\Data.sav'.
 DATASET NAME DataSet4 WINDOW=FRONT.
 
 *put your commands here. 
@@ -16,6 +16,5 @@ FREQUENCIES VARIABLES=Q13_1 Q13_2 Q13_3
 * Export Output.
 OUTPUT EXPORT
   /CONTENTS  EXPORT=ALL  LAYERS=ALL  MODELVIEWS=ALL
-  /PDF  DOCUMENTFILE='\\vmware-host\Shared Folders\Ellen and Aron Sessions\3.27.12 Session '+
-    'Output ARON.pdf'
+  /PDF  DOCUMENTFILE='\\vmware-host\Shared Folders\Dropbox\Output.pdf'
      EMBEDBOOKMARKS=YES  EMBEDFONTS=YES.
