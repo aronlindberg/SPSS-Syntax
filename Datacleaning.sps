@@ -1,6 +1,6 @@
    * Open the dataset (remember that the path is dependent on which computer you are working on.
    GET
-     FILE='\\vmware-host\Shared Folders\Ellen and Aron Sessions\Dissertation_Data_3.27.12.sav'.
+     FILE='\\vmware-host\Shared Folders\Dropbox\Data.sav'.
    DATASET NAME Datacleaning WINDOW=FRONT.
 
 *This command renames your variables. Create a paranthesis pair for each variable, 
