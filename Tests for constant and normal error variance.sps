@@ -1,0 +1,59 @@
+COMMENT Open the data set.
+
+GET
+  FILE='\\vmware-host\Shared Folders\Dropbox/Dataset.sav.
+
+COMMENT Name the dataset something awesome, like the name of your dog.
+DATASET NAME small_black_dog WINDOW=FRONT.
+
+COMMENT  Save the variables we need.
+
+REGRESSION
+  /DESCRIPTIVES MEAN STDDEV CORR SIG N
+  /MISSING LISTWISE
+  /STATISTICS COEFF OUTS R ANOVA ZPP
+  /CRITERIA=PIN(.05) POUT(.10)
+  /NOORIGIN
+  /DEPENDENT Q13_1
+  /METHOD=ENTER Q13_2 Q13_3
+  /PARTIALPLOT ALL
+  /RESIDUALS HIST(SDRESID) NORM(SDRESID) OUTLIERS (COOK, MAHAL, SDRESID)
+  /SAVE ZPRED MAHAL COOK SDRESID DFBETA SDBETA COVRATIO.
+
+COMMENT The next commands are graphic tests of constant error variance (secondary assumption 1).
+
+GRAPH
+  /SCATTERPLOT(BIVAR)=zpr_1 WITH sdr_1
+  /MISSING=LISTWISE .
+
+GRAPH
+  /SCATTERPLOT(BIVAR)= Q13_1 WITH sdr_1
+  /MISSING=LISTWISE .
+
+GRAPH
+  /SCATTERPLOT(BIVAR)= Q13_2 WITH sdr_2
+  /MISSING=LISTWISE .
+
+GRAPH
+  /SCATTERPLOT(BIVAR)=Q13_3 WITH sdr_3
+  /MISSING=LISTWISE.
+
+COMMENT The next two commands are graphic and significance tests of the normality of the residuals.
+
+FREQUENCIES
+   VARIABLES=sdr_1
+   /STATISTICS=STDDEV RANGE MINIMUM MAXIMUM MEAN MEDIAN SKEWNESS SESKW KURTOSIS SEKURT
+   /HISTOGRAM NORMAL.
+
+EXAMINE VARIABLES=sdr_1
+   /PLOT HISTOGRAM NPPLOT
+   /COMPARE GROUP
+   /STATISTICS DESCRIPTIVES
+   /CINTERVAL 95
+   /MISSING LISTWISE
+   /NOTOTAL.
+
+COMMENT Close the dataset.
+
+DATASET CLOSE small_black_dog.
+
