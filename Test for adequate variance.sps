@@ -1,10 +1,11 @@
-*Test for adequate variance
+*Test for adequate variance and normality
 
 GET
   FILE='\\vmware-host\Shared Folders\Dropbox\Data.sav'.
 DATASET NAME DataSet4 WINDOW=FRONT.
 
-*put your commands here. 
+* The frequencies command displays all kinds of statistics about variables that you can use to determine variance
+* (through looking at how variables are distributed) and normality (kurtosis, skewness as well as histograms).
 
 DATASET ACTIVATE DataSet1.
 FREQUENCIES VARIABLES=Q13_1 Q13_2 Q13_3
