@@ -1,0 +1,276 @@
+* TURN OFF SCIENTIFIC NOTATION
+
+SET DIGITGROUPING=No Small=0 Unicode=No OLang=English.
+
+* OPEN THE DATASET
+
+GET 
+  FILE='\\vmware-host\Shared Folders\Advanced Statistics II\Homework #5\T3 Big with modified labels.sav'. 
+
+DATASET NAME Homework5 WINDOW=FRONT.
+DATASET ACTIVATE Homework5.
+
+*Test the 5 screening criteria with Frequencies for CESD Happy and Sad items.
+
+FREQUENCIES VARIABLES=cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd10c cesd11c cesd12c        
+  /FORMAT=NOTABLE
+  /STATISTICS=RANGE SKEWNESS KURTOSIS STDDEV MEAN
+  /ORDER=ANALYSIS.
+
+*Test for non-linearity with scatterplot for “Had Crying Spells” (it has large skewness and Kurtosis scores) against the 24 other items being tested.  
+
+REGRESSION
+  /MISSING LISTWISE
+  /STATISTICS COEFF OUTS R ANOVA
+  /CRITERIA=PIN(.05) POUT(.10)
+  /NOORIGIN 
+  /DEPENDENT cesd10c
+  /METHOD=ENTER cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PARTIALPLOT ALL.
+
+* Test for influential cases and multicollinearity 
+
+REGRESSION
+  /MISSING LISTWISE
+  /STATISTICS ALL
+  /CRITERIA=PIN(.05) POUT(.10)
+  /NOORIGIN
+  /DEPENDENT id 
+  /METHOD=ENTER cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /SAVE MAHAL.
+
+* Run Mahalanobis statistics
+
+EXAMINE
+   VARIABLES=MAH_1
+   /PLOT BOXPLOT HISTOGRAM
+   /COMPARE GROUP
+   /STATISTICS DESCRIPTIVES EXTREME (50)
+   /MISSING LISTWISE
+   /NOTOTAL.
+
+* Run 1 factor EFA for the 8 Happy and Sad items of the CESD
+
+FACTOR VARIABLES=cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(1) ITERATE(25)
+  /EXTRACTION PAF
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 2 factor EFA for the 8 Happy and Sad items of the CESD
+
+FACTOR VARIABLES=cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c cesd12c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(2) ITERATE(25)
+  /EXTRACTION PAF
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION. 
+
+* Run 2 factor EFA for the 8 Happy and Sad items of the CESD - WITHOUT cesdc12c
+
+FACTOR VARIABLES=cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.10)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(2) ITERATE(25)
+  /EXTRACTION PAF
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION. 
+
+* THIS IS THE BEST ONE FOR CESD, GIVES US 2 FACTORS - HAPPY & SAD
+Run 2 factor EFA for the 8 Happy and Sad items of the CESD - WITHOUT cesd12c & cesdc3c.
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(2) ITERATE(25)
+  /EXTRACTION PAF
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 3 factor EFA for the 8 Happy and Sad items of the CESD (without cesd12c but WITH cesd3c because it needes it to reach a solution)
+
+FACTOR VARIABLES=cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd3c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.10)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(3) ITERATE(25)
+  /EXTRACTION PAF
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 2 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(2) ITERATE(25)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 3 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(3) ITERATE(25)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* (THIS IS THE BEST ONE) Run 4 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(4) ITERATE(30)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 5 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(5) ITERATE(25)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 6 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(6) ITERATE(25)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run 7 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(7) ITERATE(25)
+  /EXTRACTION PC
+  /CRITERIA ITERATE(25) DELTA(0)
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+
+* Run 8 factor EFA for remaining CESD items, as well as remaining NA, PA, & CLS items
+
+FACTOR VARIABLES=cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /MISSING LISTWISE
+  /ANALYSIS cesd2c cesd4c cesd5c cesd7c cesd8c cesd9c cesd11c panas1c, panas5c, panas6c, panas7c, panas9c
+   panas2c, panas3c, panas4c, panas6c, panas9c, panas10c lifsat1c, lifsat2c, lifsat3c, lifsat4c, lifsat5c
+  /PRINT INITIAL UNIVARIATE CORRELATION ROTATION REPR
+  /FORMAT SORT BLANK (.30)
+  /PLOT EIGEN
+  /CRITERIA FACTORS(8) ITERATE(25)
+  /EXTRACTION PC
+  /ROTATION OBLIMIN
+  /METHOD=CORRELATION.
+
+* Run Reliability on Factor 1
+
+RELIABILITY
+/VARIABLES= panas2c panas3c panas4c panas8c panas10c cesd11c
+  /FORMAT=NOLABELS
+/SCALE(ALPHA)=ALL/MODEL=ALPHA
+/STATISTICS=DESCRIPTIVE SCALE CORR
+/SUMMARY=TOTAL MEANS VARIANCE CORR.
+
+* Run Reliability on Factor 2
+
+RELIABILITY
+/VARIABLES= panas9c panas6c panas7c
+  /FORMAT=NOLABELS
+/SCALE(ALPHA)=ALL/MODEL=ALPHA
+/STATISTICS=DESCRIPTIVE SCALE CORR
+/SUMMARY=TOTAL MEANS VARIANCE CORR.
+
+* Run Reliability on Factor 3
+
+RELIABILITY
+/VARIABLES= lifsat5c lifsat4c lifsat1c lifsat3c lifsat2c
+  /FORMAT=NOLABELS
+/SCALE(ALPHA)=ALL/MODEL=ALPHA
+/STATISTICS=DESCRIPTIVE SCALE CORR
+/SUMMARY=TOTAL MEANS VARIANCE CORR.
+
+* Run Reliability on Factor 4
+
+RELIABILITY
+/VARIABLES= cesd7c cesd9c panas1c panas5c cesd5c
+  /FORMAT=NOLABELS
+/SCALE(ALPHA)=ALL/MODEL=ALPHA
+/STATISTICS=DESCRIPTIVE SCALE CORR
+/SUMMARY=TOTAL MEANS VARIANCE CORR.
+
+* CLOSE THE DATASET
+
+DATASET CLOSE Homework5.
+
+* Export Output.
+OUTPUT EXPORT
+  /CONTENTS  EXPORT=ALL  LAYERS=ALL  MODELVIEWS=ALL
+  /PDF  DOCUMENTFILE='\\vmware-host\Shared Folders\Advanced Statistics II\Homework '+
+    '#5\homework5_output.pdf'
+     EMBEDBOOKMARKS=YES  EMBEDFONTS=YES.
+
+
+
+
